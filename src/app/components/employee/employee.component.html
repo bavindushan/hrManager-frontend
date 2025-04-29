@@ -1,0 +1,94 @@
+<div class="container mt-4">
+  <h2 class="mb-4 text-primary">Employee Management</h2>
+
+  <!-- Search Section -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="input-group">
+            <input class="form-control" [(ngModel)]="searchId" name="searchId" placeholder="Search by ID" type="number">
+            <button class="btn btn-outline-primary" (click)="searchEmployeeById()">Search</button>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group">
+            <input class="form-control" [(ngModel)]="searchName" name="searchName" placeholder="Search by Name">
+            <button class="btn btn-outline-primary" (click)="searchEmployeeByName()">Search</button>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-secondary" (click)="loadEmployees()">Reset Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employee Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h4 class="card-title mb-4">{{ isUpdating ? 'Update Employee' : 'Add Employee' }}</h4>
+      <form (ngSubmit)="saveEmployee()" #employeeForm="ngForm">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <input class="form-control" [(ngModel)]="employee.name" name="name" placeholder="Name" required>
+          </div>
+          <div class="col-md-4">
+            <input class="form-control" [(ngModel)]="employee.email" name="email" placeholder="Email" required>
+          </div>
+          <div class="col-md-4">
+            <select class="form-select" [(ngModel)]="employee.department" name="department" required>
+              <option value="">Select Department</option>
+              <option value="HR">HR</option>
+              <option value="IT">IT</option>
+              <option value="FINANCE">Finance</option>
+              <option value="OPERATION">Operation</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-3">
+          <button type="submit" class="btn btn-primary">
+            {{ isUpdating ? 'Update Employee' : 'Add Employee' }}
+          </button>
+          <button type="button" class="btn btn-light ms-2" (click)="resetForm()">Clear</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Employee List -->
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title mb-4">Employee List</h4>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Department</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let emp of employees">
+              <td>{{ emp.id }}</td>
+              <td>{{ emp.name }}</td>
+              <td>{{ emp.email }}</td>
+              <td><span class="badge bg-info">{{ emp.department }}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-2" (click)="editEmployee(emp)">
+                  <i class="bi bi-pencil"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteEmployee(emp.id)">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
