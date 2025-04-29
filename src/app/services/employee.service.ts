@@ -7,33 +7,36 @@ import { Employee } from '../models/employee.model';
   providedIn: 'root'
 })
 export class EmployeeService {
-  private baseUrl = 'http://localhost:8080/employee'
+  private baseUrl = 'http://localhost:8080/employee';
 
   constructor(private http: HttpClient) { }
-   getAll(): Observable<Employee[]>{
-    return this.http.get<Employee[]>(`${this.baseUrl}/get-all`)
-   }
-   // ✅ Add a new employee
+
+  // Fetch all employees
+  getAll(): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.baseUrl}/get-all`);
+  }
+
+  // Add a new employee
   addEmployee(employee: Employee): Observable<any> {
     return this.http.post(`${this.baseUrl}/add`, employee);
   }
 
-  // ✅ Update an existing employee
+  // Update an existing employee
   updateEmployee(employee: Employee): Observable<any> {
     return this.http.put(`${this.baseUrl}/update`, employee);
   }
 
-  // ✅ Delete employee by ID
+  // Delete employee by ID
   deleteEmployee(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/delete/${id}`);
   }
 
-  // ✅ Search employee by ID
+  // Get employee by ID
   getById(id: number): Observable<Employee> {
-    return this.http.get<Employee>(`${this.baseUrl}/get/${id}`);
+    return this.http.get<Employee>(`${this.baseUrl}/get-by-id/${id}`);
   }
 
-  // ✅ Search employees by name
+  // Get employee by name (if you need this API)
   getByName(name: string): Observable<Employee[]> {
     return this.http.get<Employee[]>(`${this.baseUrl}/get-by-name/${name}`);
   }

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee } from '../../models/employee.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-employee',
@@ -24,79 +25,82 @@ export class EmployeeComponent implements OnInit {
     this.loadEmployees();
   }
 
-
   loadEmployees() {
     this.employeeService.getAll().subscribe((data) => {
       this.employees = data;
     });
   }
 
-
   saveEmployee() {
     if (this.employee.name && this.employee.email && this.employee.department) {
       if (this.isUpdating) {
-        // Update existing employee
+
         this.employeeService.updateEmployee(this.employee).subscribe(() => {
-          alert('Employee updated successfully!');
+          Swal.fire('Success', 'Employee updated successfully!', 'success');
           this.loadEmployees();
           this.resetForm();
         });
       } else {
-        // Add new employee
+
         this.employeeService.addEmployee(this.employee).subscribe(() => {
-          alert('Employee added successfully!');
+          Swal.fire('Success', 'Employee added successfully!', 'success');
           this.loadEmployees();
           this.resetForm();
         });
       }
     } else {
-      alert('Please fill all fields!');
+      Swal.fire('Error', 'Please fill all fields!', 'error');
     }
   }
 
-  // ✅ Edit employee - Load into form
   editEmployee(emp: Employee) {
     this.employee = { ...emp };
     this.isUpdating = true;
   }
 
-  // ✅ Delete employee
   deleteEmployee(id: number | undefined) {
     if (id !== undefined) {
-      if (confirm('Are you sure you want to delete this employee?')) {
-        this.employeeService.deleteEmployee(id).subscribe(() => {
-          alert('Employee deleted!');
-          this.loadEmployees();
-        });
-      }
-    }
-  }
-
-  // ✅ Search employee by ID
-  searchEmployeeById() {
-    if (this.searchId > 0) {
-      this.employeeService.getById(this.searchId).subscribe((emp) => {
-        this.employees = [emp]; // show only one employee
-      }, (error) => {
-        alert('Employee not found with ID: ' + this.searchId);
-        this.loadEmployees(); // reload all if not found
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You won\'t be able to revert this!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.employeeService.deleteEmployee(id).subscribe(() => {
+            Swal.fire('Deleted!', 'Employee deleted!', 'success');
+            this.loadEmployees();
+          });
+        }
       });
     }
   }
 
-  // ✅ Search employees by Name
-  searchEmployeeByName() {
-    if (this.searchName.trim() !== '') {
-      this.employeeService.getByName(this.searchName).subscribe((data) => {
-        this.employees = data;
+  searchEmployeeById() {
+    if (this.searchId > 0) {
+      this.employeeService.getById(this.searchId).subscribe((emp) => {
+        this.employees = [emp];
       }, (error) => {
-        alert('No employees found with Name: ' + this.searchName);
+        Swal.fire('Error', 'Employee not found with ID: ' + this.searchId, 'error');
         this.loadEmployees();
       });
     }
   }
 
-  // ✅ Reset form
+  searchEmployeeByName() {
+    if (this.searchName.trim() !== '') {
+      this.employeeService.getByName(this.searchName).subscribe((data) => {
+        this.employees = data;
+      }, (error) => {
+        Swal.fire('Error', 'No employees found with Name: ' + this.searchName, 'error');
+        this.loadEmployees();
+      });
+    }
+  }
+
   resetForm() {
     this.employee = { name: '', email: '', department: 'HR' };
     this.isUpdating = false;
